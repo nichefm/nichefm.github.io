@@ -9,8 +9,14 @@ function derive(pw){return crypto.subtle.importKey('raw',new TextEncoder().encod
  return crypto.subtle.deriveBits({name:'PBKDF2',salt:u8(P.salt),iterations:P.iter,hash:'SHA-256'},b,256)}).then(function(x){return new Uint8Array(x)})}
 function open(raw){return crypto.subtle.importKey('raw',raw,'AES-GCM',false,['decrypt']).then(function(k){
  return crypto.subtle.decrypt({name:'AES-GCM',iv:u8(P.iv)},k,u8(P.ct))}).then(function(pt){return JSON.parse(new TextDecoder().decode(pt))})}
+var KEY=null;
+function brochure(a){a.addEventListener('click',function(e){e.preventDefault();if(!KEY)return;a.style.opacity='.6';
+ fetch('assets/brochure.bin').then(function(r){return r.arrayBuffer()}).then(function(buf){var b=new Uint8Array(buf);
+  return crypto.subtle.importKey('raw',KEY,'AES-GCM',false,['decrypt']).then(function(k){return crypto.subtle.decrypt({name:'AES-GCM',iv:b.slice(0,12)},k,b.slice(12))})})
+ .then(function(pt){var url=URL.createObjectURL(new Blob([pt],{type:'application/pdf'}));var t=document.createElement('a');t.href=url;t.download='Old-Bank-Arcade-brochure.pdf';document.body.appendChild(t);t.click();t.remove();setTimeout(function(){URL.revokeObjectURL(url)},4000);a.style.opacity=''})
+ .catch(function(){a.style.opacity='';a.textContent='Download failed, please try again'})})}
 function show(d){var u={};for(var n in d.imgs){var t=d.imgs[n];u[n]=URL.createObjectURL(new Blob([u8(t[1])],{type:t[0]}))}
- var h=d.body.replace(/@@([\w\-\.]+)@@/g,function(_,n){return u[n]||''});document.title=d.title;document.body.innerHTML=h;var s=document.createElement('script');s.src='assets/site.js';document.body.appendChild(s);
+ var h=d.body.replace(/@@([\w\-\.]+)@@/g,function(_,n){return u[n]||''});document.title=d.title;document.body.innerHTML=h;[].forEach.call(document.querySelectorAll('a[href$="Old-Bank-Arcade-brochure.pdf"]'),brochure);var s=document.createElement('script');s.src='assets/site.js';document.body.appendChild(s);
  if(location.hash){var t=document.getElementById(location.hash.slice(1));if(t)t.scrollIntoView()}}
 function store(raw,persist){var v=s64(raw);try{sessionStorage.setItem(KK,v);if(persist)localStorage.setItem(KK,v)}catch(e){}}
 function fails(){try{return JSON.parse(localStorage.getItem(FK))||{n:0,t:0}}catch(e){return{n:0,t:0}}}
@@ -18,10 +24,10 @@ function setFails(o){try{localStorage.setItem(FK,JSON.stringify(o))}catch(e){}}
 function locked(){var o=fails();if(o.t>Date.now()){var m=Math.ceil((o.t-Date.now())/60000);msg.textContent='Too many attempts. Try again in '+m+' minute'+(m>1?'s':'')+'.';btn.disabled=true;setTimeout(function(){btn.disabled=false;msg.textContent='';},o.t-Date.now());return true}return false}
 function ready(){g.classList.remove('wait');if(!locked())inp.focus()}
 var saved=null;try{saved=sessionStorage.getItem(KK)||localStorage.getItem(KK)}catch(e){}
-if(saved){open(u8(saved)).then(show).catch(function(){try{sessionStorage.removeItem(KK);localStorage.removeItem(KK)}catch(e){}ready()})}else ready();
+if(saved){KEY=u8(saved);open(KEY).then(show).catch(function(){try{sessionStorage.removeItem(KK);localStorage.removeItem(KK)}catch(e){}ready()})}else ready();
 f.addEventListener('submit',function(e){e.preventDefault();if(locked())return;var pw=inp.value;if(!pw)return;
  btn.disabled=true;msg.textContent='Unlocking...';var raw;
- derive(pw).then(function(r){raw=r;return open(r)}).then(function(d){setFails({n:0,t:0});store(raw,rm.checked);show(d)})
+ derive(pw).then(function(r){raw=r;KEY=r;return open(r)}).then(function(d){setFails({n:0,t:0});store(raw,rm.checked);show(d)})
  .catch(function(){var o=fails();o.n++;if(o.n>=MAX){o={n:0,t:Date.now()+LOCK}}setFails(o);btn.disabled=false;inp.value='';
   if(!locked()){var left=MAX-o.n;msg.textContent='Incorrect password. '+left+' attempt'+(left>1?'s':'')+' left before a 15 minute lockout.';inp.focus()}})});
 })();

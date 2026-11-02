@@ -14,10 +14,10 @@ lab();t.addEventListener('click',function(){b.classList.toggle('clean');
 try{localStorage.setItem('clean',b.classList.contains('clean')?'1':'0')}catch(e){}lab()})}
 
 // reveal on scroll, staggered within groups
-var els=[].slice.call(d.querySelectorAll('.feat,.lead,main>h2,main>p,.gallery .zoom,.tour a,.tl li,.chart,.tile'));
+var els=[].slice.call(d.querySelectorAll('.feat,.lead,main>h2,main>p,.gallery .zoom,.tour a,.tl li,.chart,.tile,.quote,.vid,.award,.step,.dl'));
 if('IntersectionObserver' in window){
  els.forEach(function(e){e.classList.add('rv');var p=e.parentNode,k=[].indexOf.call(p.children,e);
-  if(/gallery|tour|tl|tiles/.test(p.className))e.style.transitionDelay=(k*90)+'ms'});
+  if(/gallery|tour|tl|tiles|vids|awards|steps/.test(p.className))e.style.transitionDelay=(k*90)+'ms'});
  var io=new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}})},{threshold:.12,rootMargin:'0px 0px -40px 0px'});
  els.forEach(function(e){io.observe(e)});
 }
