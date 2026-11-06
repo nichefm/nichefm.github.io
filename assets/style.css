@@ -134,6 +134,19 @@ figure{margin:0}
 @media(max-width:560px){.tour{grid-template-columns:1fr}.tour a,.tour a:nth-child(n){grid-column:auto;aspect-ratio:16/11}.tour b{font-size:1.55rem}}
 @media(max-width:700px){.gallery.g6 .zoom:nth-child(6){grid-column:span 2!important}}
 @media(max-width:600px){.proto{left:12px;bottom:12px;padding:6px 6px 6px 12px}.proto b{display:none}}
+/* ---------- target meters ---------- */
+.meters{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:28px}
+.meter{background:#fff;border-radius:var(--r);padding:28px 30px 24px;box-shadow:0 1px 2px rgba(0,32,91,.05),0 24px 50px -30px rgba(0,32,91,.35)}
+.mh{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:18px}
+.mh b{font-family:var(--serif);font-weight:500;font-size:1.5rem;color:var(--navy)}
+.mh span{font-size:.92rem;color:var(--sub);text-align:right}
+.track{position:relative;height:18px;border-radius:99px;background:#EEF2F8;margin-bottom:30px}
+.track:after{content:"";position:absolute;right:0;top:-8px;bottom:-8px;width:3px;border-radius:2px;background:var(--navy)}
+.track em{position:absolute;right:0;top:28px;font-style:normal;font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--navy)}
+.fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:99px;background:linear-gradient(90deg,var(--blue),var(--teal));transition:width 1.6s var(--ease) .2s}
+.meter.in .fill,.meter:not(.rv) .fill{width:var(--v)}
+.meter p{margin:0;font-family:var(--serif);font-size:1.25rem;color:var(--teal-d)}
+@media(max-width:760px){.meters{grid-template-columns:1fr}}
 /* ---------- brochure download ---------- */
 .dl{display:grid;grid-template-columns:240px 1fr;gap:48px;align-items:center;margin:88px 0 24px;background:#fff;border-radius:var(--r);padding:40px 48px;box-shadow:0 1px 2px rgba(0,32,91,.05),0 24px 50px -30px rgba(0,32,91,.35)}
 .dl-cover img{display:block;width:100%;border-radius:6px;box-shadow:0 2px 4px rgba(0,32,91,.1),0 20px 40px -16px rgba(0,32,91,.45);transform:rotate(-2deg);transition:transform .5s var(--ease)}

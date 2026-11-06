@@ -10,8 +10,9 @@ function derive(pw){return crypto.subtle.importKey('raw',new TextEncoder().encod
 function open(raw){return crypto.subtle.importKey('raw',raw,'AES-GCM',false,['decrypt']).then(function(k){
  return crypto.subtle.decrypt({name:'AES-GCM',iv:u8(P.iv)},k,u8(P.ct))}).then(function(pt){return JSON.parse(new TextDecoder().decode(pt))})}
 var KEY=null;
+function loadBr(){return new Promise(function(res,rej){if(window.__OBA_BR)return res();var s=document.createElement('script');s.src='assets/brochure.js';s.onload=function(){window.__OBA_BR?res():rej()};s.onerror=rej;document.head.appendChild(s)})}
 function brochure(a){a.addEventListener('click',function(e){e.preventDefault();if(!KEY)return;a.style.opacity='.6';
- fetch('assets/brochure.bin').then(function(r){return r.arrayBuffer()}).then(function(buf){var b=new Uint8Array(buf);
+ loadBr().then(function(){var b=u8(window.__OBA_BR);
   return crypto.subtle.importKey('raw',KEY,'AES-GCM',false,['decrypt']).then(function(k){return crypto.subtle.decrypt({name:'AES-GCM',iv:b.slice(0,12)},k,b.slice(12))})})
  .then(function(pt){var url=URL.createObjectURL(new Blob([pt],{type:'application/pdf'}));var t=document.createElement('a');t.href=url;t.download='Old-Bank-Arcade-brochure.pdf';document.body.appendChild(t);t.click();t.remove();setTimeout(function(){URL.revokeObjectURL(url)},4000);a.style.opacity=''})
  .catch(function(){a.style.opacity='';a.textContent='Download failed, please try again'})})}
